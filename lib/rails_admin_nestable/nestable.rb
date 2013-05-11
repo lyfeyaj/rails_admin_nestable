@@ -56,7 +56,17 @@ module RailsAdmin
 
             if params['tree_nodes'].present?
               begin
-                ActiveRecord::Base.transaction do
+                if defined? ActiveRecord
+                  ActiveRecord::Base.transaction do
+                    if @nestable_conf.tree?
+                      update_tree params[:tree_nodes]
+                    end
+
+                    if @nestable_conf.list?
+                      update_list params[:tree_nodes]
+                    end
+                  end
+                else
                   if @nestable_conf.tree?
                     update_tree params[:tree_nodes]
                   end
